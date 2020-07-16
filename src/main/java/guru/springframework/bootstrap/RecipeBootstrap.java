@@ -4,16 +4,19 @@ import guru.springframework.domain.*;
 import guru.springframework.repositories.CategoryRepository;
 import guru.springframework.repositories.RecipeRepository;
 import guru.springframework.repositories.UnitOfMeasureRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Slf4j
+@Configuration
 public class RecipeBootstrap  implements ApplicationListener <ContextRefreshedEvent> {
     private final CategoryRepository categoryRepository;
     private final RecipeRepository recipeRepository;
@@ -26,6 +29,7 @@ public class RecipeBootstrap  implements ApplicationListener <ContextRefreshedEv
     }
 
     @Override
+    @Transactional
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         recipeRepository.saveAll(getRecipes());
     }
@@ -45,7 +49,6 @@ public class RecipeBootstrap  implements ApplicationListener <ContextRefreshedEv
             throw new RuntimeException("Expected UOM Not Found Tablespoon");
         }
 
-
         Optional<UnitOfMeasure> teaSpoonUomOption = unitOfMeasureRepository.findByDescription("Teaspoon");
 
         if (!teaSpoonUomOption.isPresent()) {
@@ -57,7 +60,6 @@ public class RecipeBootstrap  implements ApplicationListener <ContextRefreshedEv
         if (!dashUomOption.isPresent()) {
             throw new RuntimeException("Expected UOM Not Found Dash");
         }
-
 
         Optional<UnitOfMeasure> pintUomOption = unitOfMeasureRepository.findByDescription("Pint");
 
@@ -125,8 +127,10 @@ public class RecipeBootstrap  implements ApplicationListener <ContextRefreshedEv
                 "\n" +
                 "\n" +
                 "Read more: http://www.simplyrecipes.com/recipes/perfect_guacamole/#ixzz4jvoun5ws");
-        guacNotes.setRecipe(guacRecipe);
+
         guacRecipe.setNotes(guacNotes);
+
+        log.info("boot strap guacamole created");
 
         guacRecipe.addIngredient(new Ingredient("ripe avocados", new BigDecimal(2), eachUom));
         guacRecipe.addIngredient(new Ingredient("Kosher salt", new BigDecimal(".5"),  teaSpoonUom));
@@ -137,8 +141,8 @@ public class RecipeBootstrap  implements ApplicationListener <ContextRefreshedEv
         guacRecipe.addIngredient(new Ingredient("freshly grated black pepper", new BigDecimal(2), dashUom));
         guacRecipe.addIngredient(new Ingredient("ripe tomato, seeds and pulp removed, chopped", new BigDecimal(".5"), eachUom));
 
-        guacRecipe.getCategories().add(americanCategory);
-        guacRecipe.getCategories().add(mexicanCategory);
+       guacRecipe.addCategory(americanCategory);
+       guacRecipe.addCategory (mexicanCategory);
 
         //add to return list
         recipes.add(guacRecipe);
@@ -172,9 +176,8 @@ public class RecipeBootstrap  implements ApplicationListener <ContextRefreshedEv
                 "\n" +
                 "\n" +
                 "Read more: http://www.simplyrecipes.com/recipes/spicy_grilled_chicken_tacos/#ixzz4jvu7Q0MJ");
-        tacoNotes.setRecipe(tacosRecipe);
-        tacosRecipe.setNotes(tacoNotes);
 
+        tacosRecipe.setNotes(tacoNotes);
 
         tacosRecipe.addIngredient(new Ingredient("Ancho Chili Powder", new BigDecimal(2), tableSpoonUom));
         tacosRecipe.addIngredient(new Ingredient("Dried Oregano", new BigDecimal(1), teaSpoonUom));
@@ -196,10 +199,15 @@ public class RecipeBootstrap  implements ApplicationListener <ContextRefreshedEv
         tacosRecipe.addIngredient(new Ingredient("cup sour cream thinned with 1/4 cup milk", new BigDecimal(4), cupsUom));
         tacosRecipe.addIngredient(new Ingredient("lime, cut into wedges", new BigDecimal(4), eachUom));
 
-        tacosRecipe.getCategories().add(americanCategory);
-        tacosRecipe.getCategories().add(mexicanCategory);
+        tacosRecipe.addCategory(americanCategory);
+        tacosRecipe.addCategory(mexicanCategory);
+
+
 
         recipes.add(tacosRecipe);
+
+        log.info("boot strap taco created");
+
         return recipes;
     }
 
