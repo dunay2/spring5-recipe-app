@@ -9,40 +9,56 @@ import org.mockito.MockitoAnnotations;
 
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.verify;
-
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 public class RecipeServiceImplTest {
 
-    private RecipeServiceImpl recipeService;
+    private RecipeServiceImpl service;
 
     @Mock
-    RecipeRepository recipeRepository;
+    RecipeRepository repository;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        recipeService= new RecipeServiceImpl(recipeRepository);
+        service= new RecipeServiceImpl(repository);
     }
 
     @Test
     public void getRecipes() {
         Recipe recipe= new Recipe();
-        HashSet recipeData = new HashSet<String>();
-        recipeData.add(recipe);
+        HashSet data = new HashSet<String>();
+        data.add(recipe);
 
-        when (recipeRepository.findAll()).thenReturn(recipeData);
+        when (repository.findAll()).thenReturn(data);
 
-        Set<Recipe> recipes=recipeService.getRecipes();
+        Set<Recipe> recipes=service.getRecipes();
         assertEquals(recipes.size(),1);
-        verify(recipeRepository,times(1)).findAll();
+        verify(repository,times(1)).findAll();
 
     }
+
+
+
+    @Test
+    public void getRecipeById() {
+        Optional<Recipe> optionalRecipe= Optional.of( Recipe.builder().id(1L).build());
+
+        when (repository.findById (anyLong())).thenReturn(optionalRecipe);
+
+        Recipe recipeReturned=service.findById(1L);
+
+        assertNotNull("Null recipe Returned",recipeReturned);
+
+        verify(repository,times(1)).findById (anyLong());
+        verify(repository,never()).findAll ();
+    }
+
 
 }
