@@ -15,10 +15,6 @@ public class RecipeController {
     @Autowired
     private RecipeService service;
 
-    public RecipeController(RecipeService recipeService) {
-        this.service = recipeService;
-    }
-
     @RequestMapping("/recipe/{id}/show")
     public String showById(@PathVariable String id, Model model) {
         log.debug("call getShowPage on RecipeController goes to recipe/show");
@@ -46,8 +42,4 @@ public class RecipeController {
         return  "recipe/recipeform";
     }
 
-
 }
-
-
-
