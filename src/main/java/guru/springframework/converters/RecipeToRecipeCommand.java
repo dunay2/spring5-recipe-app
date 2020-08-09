@@ -1,9 +1,6 @@
 package guru.springframework.converters;
 
 import guru.springframework.commands.RecipeCommand;
-import guru.springframework.converters.CategoryToCategoryCommand;
-import guru.springframework.converters.IngredientToIngredientCommand;
-import guru.springframework.converters.NotesToNotesCommand;
 import guru.springframework.domain.Category;
 import guru.springframework.domain.Recipe;
 import lombok.Synchronized;

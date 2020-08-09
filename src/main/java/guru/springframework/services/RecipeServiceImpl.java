@@ -18,7 +18,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Slf4j
 @Service
-public class RecipeServiceImpl implements RecipeService {
+public class RecipeServiceImpl implements RecipeService  {
 
     @Autowired
     private RecipeRepository repository;
@@ -27,7 +27,6 @@ public class RecipeServiceImpl implements RecipeService {
     @Autowired
     private  RecipeToRecipeCommand objectToObjectCommand;
 
-    @Override
     public Set<Recipe> getAll() {
         log.debug("call from recipe service impl ");
 
@@ -36,7 +35,6 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeSet;
     }
 
-    @Override
     @Transactional
     public RecipeCommand saveCommand(RecipeCommand command) {
         Recipe detachedRecipe = objectCommandToObject.convert(command);
@@ -47,12 +45,10 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Transactional
-    @Override
     public RecipeCommand findCommandById(Long l) {
           return objectToObjectCommand.convert(findById(l));
     }
 
-    @Override
     public Recipe findById(Long l) {
         Optional<Recipe> recipe= repository.findById(l);
 
