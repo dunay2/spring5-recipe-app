@@ -1,7 +1,6 @@
 package guru.springframework.domain;
 
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,23 +8,20 @@ import java.util.Set;
 /**
  * Created by jt on 6/13/17.
  */
+
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
-public class Recipe {
+public class Recipe  extends BaseDomain{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String description;
     private Integer prepTime;
     private Integer cookTime;
     private Integer servings;
     private String source;
     private String url;
+
 
     @Lob
     private String directions;
@@ -66,6 +62,22 @@ public class Recipe {
         if (categories != null) {
             this.categories.add(category);
         }
+    }
+
+    @Builder
+    public Recipe(Long id, String description, Integer prepTime, Integer cookTime, Integer servings, String source, String url, String directions, Set<Ingredient> ingredients, Byte[] image, Difficulty difficulty, Notes notes, Set<Category> categories) {
+        super(id, description);
+        this.prepTime = prepTime;
+        this.cookTime = cookTime;
+        this.servings = servings;
+        this.source = source;
+        this.url = url;
+        this.directions = directions;
+        this.ingredients = ingredients;
+        this.image = image;
+        this.difficulty = difficulty;
+        this.notes = notes;
+        this.categories = categories;
     }
 }
 

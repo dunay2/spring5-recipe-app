@@ -1,5 +1,6 @@
 package guru.springframework.controllers;
 
+import guru.springframework.domain.Notes;
 import guru.springframework.domain.Recipe;
 import guru.springframework.services.RecipeService;
 import org.junit.Before;
@@ -50,38 +51,29 @@ public class IndexControllerTest {
     }
     @Test
     public void getIndexPage() {
+
         //given
-
         Set<Recipe> recipes= new HashSet<>();
-        Recipe recipe1= new Recipe();
-        recipe1.setId(1L);
-        recipes.add(recipe1);
+        Recipe recipe1 = new Recipe();
+        Recipe recipe2 = new Recipe();
 
-        Recipe recipe2= new Recipe();
+        recipe1.setId(1L);
         recipe2.setId(2L);
+
+        recipes.add(recipe1);
         recipes.add(recipe2);
 
         //when
-        when(recipeService.getRecipes()).thenReturn(recipes);
+        when(recipeService.getAll()).thenReturn(recipes);
 
         ArgumentCaptor<Set<Recipe>> argumentCaptor =ArgumentCaptor.forClass(Set.class);
 
         //then
         assertEquals("index", controller.getIndexPage(model));
 
-        verify(recipeService, times(1)).getRecipes();
+        verify(recipeService, times(1)).getAll();
         verify(model, times(1)).addAttribute(eq("recipes"),argumentCaptor.capture());
         Set<Recipe> setIdxController=argumentCaptor.getValue();
         assertEquals(2,setIdxController.size());
     }
 }
-
-
-
-
-
-
-
-
-
-

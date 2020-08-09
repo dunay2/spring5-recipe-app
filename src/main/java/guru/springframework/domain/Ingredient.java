@@ -8,15 +8,11 @@ import java.math.BigDecimal;
 /**
  * Created by jt on 6/13/17.
  */
-@EqualsAndHashCode(exclude = {"recipe"})
+@EqualsAndHashCode(exclude = {"recipe"}, callSuper = true)
 @Data
 @Entity
-public class Ingredient {
+public class Ingredient extends BaseDomain {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String description;
     private BigDecimal amount;
 
     @OneToOne(fetch = FetchType.EAGER)
@@ -27,8 +23,10 @@ public class Ingredient {
 
     public Ingredient() {
     }
-    public Ingredient(String description, BigDecimal amount, UnitOfMeasure uom) {
-        this.description = description;
+
+    @Builder
+    public Ingredient(Long id, String description, BigDecimal amount, UnitOfMeasure uom) {
+        super(id, description);
         this.amount = amount;
         this.uom = uom;
     }

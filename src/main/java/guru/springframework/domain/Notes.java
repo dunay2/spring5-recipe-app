@@ -1,27 +1,20 @@
 package guru.springframework.domain;
 
+
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 
-/**
- * Created by jt on 6/13/17.
- */
-@EqualsAndHashCode(exclude = {"recipe"})
 @Data
+@EqualsAndHashCode(exclude = {"recipe"}, callSuper = true)
 @Entity
-public class Notes {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Notes extends BaseDomain {
 
     @OneToOne
     private Recipe recipe;
 
     @Lob
     private String recipeNotes;
-
 }
-
-

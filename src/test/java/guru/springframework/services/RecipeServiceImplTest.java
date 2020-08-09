@@ -1,11 +1,14 @@
 package guru.springframework.services;
 
+import guru.springframework.converters.RecipeCommandToRecipe;
+import guru.springframework.converters.RecipeToRecipeCommand;
 import guru.springframework.domain.Recipe;
 import guru.springframework.repositories.RecipeRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 import java.util.HashSet;
@@ -20,6 +23,9 @@ public class RecipeServiceImplTest {
 
     private RecipeServiceImpl service;
 
+    private RecipeCommandToRecipe objectCommandToObject;
+    private RecipeToRecipeCommand objectToObjectCommand;
+
     @Mock
     RecipeRepository repository;
 
@@ -27,7 +33,7 @@ public class RecipeServiceImplTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        service= new RecipeServiceImpl(repository);
+        service= new RecipeServiceImpl(repository,objectCommandToObject,objectToObjectCommand);
     }
 
     @Test
@@ -38,13 +44,10 @@ public class RecipeServiceImplTest {
 
         when (repository.findAll()).thenReturn(data);
 
-        Set<Recipe> recipes=service.getRecipes();
+        Set<Recipe> recipes=service.getAll();
         assertEquals(recipes.size(),1);
         verify(repository,times(1)).findAll();
-
     }
-
-
 
     @Test
     public void getRecipeById() {
@@ -59,6 +62,5 @@ public class RecipeServiceImplTest {
         verify(repository,times(1)).findById (anyLong());
         verify(repository,never()).findAll ();
     }
-
 
 }

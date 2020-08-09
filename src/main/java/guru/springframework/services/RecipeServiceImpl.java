@@ -1,27 +1,34 @@
 package guru.springframework.services;
 
+import guru.springframework.commands.RecipeCommand;
+import guru.springframework.converters.RecipeCommandToRecipe;
+import guru.springframework.converters.RecipeToRecipeCommand;
 import guru.springframework.domain.Recipe;
 import guru.springframework.repositories.RecipeRepository;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+@AllArgsConstructor
 @Slf4j
 @Service
 public class RecipeServiceImpl implements RecipeService {
 
-    private final RecipeRepository repository;
-
-    public RecipeServiceImpl(RecipeRepository repository) {
-        this.repository = repository;
-    }
+    @Autowired
+    private RecipeRepository repository;
+    @Autowired
+    private  RecipeCommandToRecipe objectCommandToObject;
+    @Autowired
+    private  RecipeToRecipeCommand objectToObjectCommand;
 
     @Override
-    public Set<Recipe> getRecipes() {
+    public Set<Recipe> getAll() {
         log.debug("call from recipe service impl ");
 
         Set<Recipe> recipeSet = new HashSet<>();
@@ -30,7 +37,23 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Recipe findById(long l) {
+    @Transactional
+    public RecipeCommand saveCommand(RecipeCommand command) {
+        Recipe detachedRecipe = objectCommandToObject.convert(command);
+
+        Recipe savedRecipe=repository.save(detachedRecipe);
+        log.debug("Saved RecipeId:" + savedRecipe.getId());
+        return objectToObjectCommand.convert(savedRecipe);
+    }
+
+    @Transactional
+    @Override
+    public RecipeCommand findCommandById(Long l) {
+          return objectToObjectCommand.convert(findById(l));
+    }
+
+    @Override
+    public Recipe findById(Long l) {
         Optional<Recipe> recipe= repository.findById(l);
 
         if(!recipe.isPresent()) {
